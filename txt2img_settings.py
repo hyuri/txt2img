@@ -21,7 +21,8 @@ settings = {
 		"background_color": (0, 0, 0, 0),
 		"padding": 0,
 		"resize": None,
-		"text_encoding": "utf-8"
+		"text_encoding": "utf-8",
+		"alpha_supported": ("png", "tga", "webp", "tiff")
 	}
 }
 
