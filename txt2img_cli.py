@@ -29,7 +29,7 @@ def main():
 	parser.add_argument("-r", "--resize", "-resize", type=int, default=SETTINGS["resize"], help=f"Resize image width(in pixels)—height resizes proportionally. Default is {SETTINGS['resize']}.")
 	parser.add_argument("output", type=str, help="Output image file.")
 
-	args = parser.parse_args(["./tests/uga buga.txt", "54", "text.png"])
+	args = parser.parse_args(["uga buga", "54", "text.png"])
 	text_to_image(
 		text=args.text,
 		font_size=args.font_size,

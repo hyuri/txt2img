@@ -72,13 +72,14 @@ def text_to_image(text, font_size, output, **optional_settings):
 	# If passed text is a file, replace text with that file's text
 	lines_count = 1
 	longest_line = text
-	if Path(text).is_file:
+	try:
 		text = Path(text).read_text(encoding=SETTINGS["text_encoding"])
 		lines = text.split("\n")
 		lines_count = len(lines)
 		longest_line = max(lines, key=lambda line: font.getsize(line)[0])
+	except FileNotFoundError:
+		pass
 
-	print(lines_count)
 	# Get an image size that accommodates text set to font size
 	image_size = (font.getsize(longest_line)[0] + SETTINGS["padding"], (font.getsize(longest_line)[1] * lines_count) + SETTINGS["padding"])
 	img = Image.new(SETTINGS["color_model"], image_size, color=SETTINGS["background_color"])
