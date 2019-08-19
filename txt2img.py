@@ -13,7 +13,6 @@ TODO:
 By Hyuri Pimentel
 """
 
-
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -29,16 +28,16 @@ def text_to_image(text, font_size, output, **optional_settings):
 	Generates an image file from a string or text file.
 	
 	Required args:, text, font_size, output
-	Optional args: font, color_model, text_color, background_color, padding, resize
-
-	Default settings:
+	Optional args (Defaults):
 		font = "IBMPlexSans-Regular.ttf"
 		color_model = "RGBA"
 		text_color = "black"
 		background_color = (0, 0, 0, 0) # fully transparent
 		padding = 0
+		text_baseline = 0
 		resize = None
 		text_encoding = "utf-8"
+		alpha_supported = ("png", "tga", "webp", "tiff")
 	"""
 	
 	# Replace default SETTINGS with passed SETTINGS
@@ -50,14 +49,14 @@ def text_to_image(text, font_size, output, **optional_settings):
 
 	# If user asks for a format that does not support an alpha channel,
 	# ignore alpha channel, and change color model to RGB
-	if output.suffix.lower().strip(".") not in SETTINGS["alpha_supported"]:
+	if output.suffix.strip(".").lower() not in SETTINGS["alpha_supported"]:
 		if SETTINGS["color_model"] == "RGBA":
 			SETTINGS["color_model"] = "RGB"
 			print(f"(i) Alpha channel has been ignored for {output.suffix}. Using RGB instead.")
 	
 	font = ImageFont.truetype(SETTINGS["font"] if type(SETTINGS["font"]) == str else str(SETTINGS["font"].resolve()), font_size)
 
-	# If passed text is a file, replace text with that file's text
+	# If passed text is a file, replace text with that file's text content
 	lines_count = 1
 	longest_line = text
 	try:
@@ -69,12 +68,14 @@ def text_to_image(text, font_size, output, **optional_settings):
 		pass
 
 	# Get an image size that accommodates text set to font size
+
 	image_size = (font.getsize(longest_line)[0] + SETTINGS["padding"], (font.getsize(longest_line)[1] * lines_count) + SETTINGS["padding"])
 	img = Image.new(SETTINGS["color_model"], image_size, color=SETTINGS["background_color"])
 
 	# Create drawing and write given text
 	drawing = ImageDraw.Draw(img)
-	drawing.text(text=text, font=font, fill=SETTINGS["text_color"], xy=(int(SETTINGS["padding"]/2), int(SETTINGS["padding"]/2)))
+	
+	drawing.text(text=text, font=font, fill=SETTINGS["text_color"], xy=(int(SETTINGS["padding"]/2), int(SETTINGS["padding"]/2) + SETTINGS["text_baseline"]))
 
 	# If resize provided, resize width to given value(Height is resized proportionally)
 	if SETTINGS["resize"]:
