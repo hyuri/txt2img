@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Text2Image — Converts a piece of text, or a text file, into an image file.
+txt2img(Text-To-Image) — Generates an image file from a string or text file.
 Configurable: Font, Font Size, Text Color, Background Color, Color Model, Padding, Image Size(resizing).
 Image format of your choice.
 (i) Ignores alpha channel for formats that do not support it.
@@ -26,20 +26,10 @@ SETTINGS = settings.settings[settings.active]
 
 def text_to_image(text, font_size, output, **optional_settings):
 	"""
-	Converts a piece of text into an image. Accepts a text file as well.
+	Generates an image file from a string or text file.
 	
-	Required args:
-		text
-		font_size
-		output
-
-	Optional args:
-		font
-		color_model
-		text_color
-		background_color
-		padding
-		resize
+	Required args:, text, font_size, output
+	Optional args: font, color_model, text_color, background_color, padding, resize
 
 	Default settings:
 		font = "IBMPlexSans-Regular.ttf"
@@ -58,11 +48,9 @@ def text_to_image(text, font_size, output, **optional_settings):
 
 		SETTINGS[key] = optional_settings[key]
 
-	alpha_supported = ("png", "tga", "webp", "tiff")
-
 	# If user asks for a format that does not support an alpha channel,
 	# ignore alpha channel, and change color model to RGB
-	if output.suffix.lower().strip(".") not in alpha_supported:
+	if output.suffix.lower().strip(".") not in SETTINGS["alpha_supported"]:
 		if SETTINGS["color_model"] == "RGBA":
 			SETTINGS["color_model"] = "RGB"
 			print(f"(i) Alpha channel has been ignored for {output.suffix}. Using RGB instead.")
@@ -86,7 +74,7 @@ def text_to_image(text, font_size, output, **optional_settings):
 
 	# Create drawing and write given text
 	drawing = ImageDraw.Draw(img)
-	drawing.text(text=text, font=font, fill=SETTINGS["text_color"], xy=(SETTINGS["padding"]/2, SETTINGS["padding"]/2))
+	drawing.text(text=text, font=font, fill=SETTINGS["text_color"], xy=(int(SETTINGS["padding"]/2), int(SETTINGS["padding"]/2)))
 
 	# If resize provided, resize width to given value(Height is resized proportionally)
 	if SETTINGS["resize"]:
